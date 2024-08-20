@@ -293,7 +293,7 @@
         },
         body: new URLSearchParams(data).toString()
     })
-    .then(response => response.json())  // no-cors 제거 후 응답을 JSON으로 처리
+    .then(response => response.json())  // 응답을 JSON으로 처리
     .then(data => {
         console.log('Response data:', data);
         if (data.result === 'success') {
