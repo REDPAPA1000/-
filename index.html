@@ -152,6 +152,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function loadProblems() {
+    console.log("problemsData:", problemsData);
     problems = problemsData;
     console.log('문제 로드 완료:');
     problems.forEach((problem, index) => {
