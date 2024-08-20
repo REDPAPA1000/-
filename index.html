@@ -95,6 +95,21 @@
         #end-quiz:hover {
             background-color: #c0392b;
         }
+        .problem-number {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .problem-content {
+            margin-bottom: 20px;
+        }
+        body *:not(input):not(textarea) {
+            user-select: none;
+        }
+        .copy-button, 
+        [class*="copy-"],
+        [id*="copy-"] {
+            display: none !important;
+        }
     </style>
 </head>
 <body>
@@ -199,7 +214,11 @@
     function showProblem() {
         if (problems.length > 0 && currentProblemIndex >= 0 && currentProblemIndex < problems.length) {
             const currentProblem = problems[currentProblemIndex];
-            document.getElementById('problem-title').textContent = `문제 ${currentProblemIndex + 1}: ${currentProblem.question}`;
+            const problemTitle = document.getElementById('problem-title');
+            problemTitle.innerHTML = `
+                <div class="problem-number">문제 ${currentProblemIndex + 1}</div>
+                <div class="problem-content">${currentProblem.question}</div>
+            `;
             document.getElementById('x-value').value = '';
             document.getElementById('y-value').value = '';
             document.getElementById('feedback').textContent = '';
