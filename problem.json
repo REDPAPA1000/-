@@ -1,4 +1,4 @@
-const problemsData = [
+window.problemsData = [
   {
     "question": "x + y = 10, 2x + y = 15일 때, x와 y의 값을 구하세요.",
     "x": 5,
