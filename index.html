@@ -302,7 +302,10 @@
             throw new Error('Unexpected response type');
         }
     })
-    .catch((error) => console.error('최종 결과 전송 중 오류 발생:', error));
+    .catch((error) => {
+        console.error('최종 결과 전송 중 오류 발생:', error);
+        alert('결과 전송 중 오류가 발생했습니다. 관리자에게 문의해주세요.');
+    });
 }
     </script>
 </body>
