@@ -280,15 +280,15 @@
 
     function sendFinalResultToSheet(studyTime) {
     const data = {
-      학번: studentId,
-      이름: studentName,
-      학습시간: studyTime,
-      점수: score
+        학번: studentId,
+        이름: studentName,
+        학습시간: studyTime,
+        점수: score
     };
 
-    fetch('https://script.google.com/macros/s/AKfycbyIRpMsvBHC9H-WDmLx2GxB9_kz0gxSYQVc0rgDQzABKTb12L5pBNpcu4DTMUPNmJVV/exec', {
+    fetch('https://script.google.com/macros/s/AKfycbz55hL8GLPMDZHahBeOgnsq1pRXUb70BrEn4beTJJel-1KWLrATMbmnaKlE85DCwS3j/exec', {
         method: 'POST',
-        headers: {
+        headers: {  // 수정된 부분
             'Content-Type': 'application/x-www-form-urlencoded',
         },
         body: new URLSearchParams(data).toString()  // 데이터를 URL 인코딩 형식으로 전송
