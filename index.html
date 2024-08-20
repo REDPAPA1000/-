@@ -1,4 +1,4 @@
-Copy<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
@@ -133,110 +133,117 @@ Copy<!DOCTYPE html>
     </div>
 
     <script src="problem.js"></script>
-<script>
-  let problems = [];
-let currentProblemIndex = -1;
-let studentName = '';
-let studentId = '';
-let startTime;
-let endTime;
-let score = 0;
-let answeredQuestions = 0;
+    <script>
+    let problems = [];
+    let currentProblemIndex = -1;
+    let studentName = '';
+    let studentId = '';
+    let startTime;
+    let endTime;
+    let score = 0;
+    let answeredQuestions = 0;
 
-document.addEventListener('DOMContentLoaded', function() {
-    loadProblems();
-    document.getElementById('submit-answer').addEventListener('click', checkAnswer);
-    document.getElementById('prev-problem').addEventListener('click', () => navigateProblem(-1));
-    document.getElementById('next-problem').addEventListener('click', () => navigateProblem(1));
-    document.getElementById('end-quiz').addEventListener('click', endQuiz);
-});
-
-function loadProblems() {
-    console.log("problemsData:", problemsData);
-    problems = problemsData;
-    console.log('문제 로드 완료:');
-    problems.forEach((problem, index) => {
-        console.log(`문제 ${index + 1}:`, JSON.stringify(problem, null, 2));
+    document.addEventListener('DOMContentLoaded', function() {
+        loadProblems();
+        document.getElementById('submit-answer').addEventListener('click', checkAnswer);
+        document.getElementById('prev-problem').addEventListener('click', () => navigateProblem(-1));
+        document.getElementById('next-problem').addEventListener('click', () => navigateProblem(1));
+        document.getElementById('end-quiz').addEventListener('click', endQuiz);
     });
-}
 
-function startQuiz() {
-    studentId = document.getElementById('student-id').value.trim();
-    studentName = document.getElementById('student-name').value.trim();
-
-    if (studentId && studentName) {
-        if (problems.length > 0) {
-            console.log(`퀴즈 시작: 총 ${problems.length}개의 문제가 로드됨`);
-            document.getElementById('student-info').style.display = 'none';
-            document.getElementById('quiz-section').style.display = 'block';
-            currentProblemIndex = -1;
-            navigateProblem(1);
-            startTime = new Date();
-        } else {
-            console.error('문제가 로드되지 않음');
-            alert('문제가 로드되지 않았습니다.');
+    function shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
         }
-    } else {
-        alert('학번과 이름을 모두 입력해주세요.');
     }
-}
 
-function navigateProblem(direction) {
-    currentProblemIndex += direction;
-    if (currentProblemIndex < 0) currentProblemIndex = 0;
-    if (currentProblemIndex >= problems.length) currentProblemIndex = problems.length - 1;
-    
-    showProblem();
-}
+    function loadProblems() {
+        problems = problemsData;
+        shuffleArray(problems);
+        console.log('문제 로드 완료 (랜덤 순서):');
+        problems.forEach((problem, index) => {
+            console.log(`문제 ${index + 1}:`, JSON.stringify(problem, null, 2));
+        });
+    }
 
-function showProblem() {
-    if (problems.length > 0 && currentProblemIndex >= 0 && currentProblemIndex < problems.length) {
-        const currentProblem = problems[currentProblemIndex];
-        document.getElementById('problem-title').textContent = currentProblem.question;
-        document.getElementById('x-value').value = '';
-        document.getElementById('y-value').value = '';
-        document.getElementById('feedback').textContent = '';
-        document.getElementById('feedback').className = '';
+    function startQuiz() {
+        studentId = document.getElementById('student-id').value.trim();
+        studentName = document.getElementById('student-name').value.trim();
+
+        if (studentId && studentName) {
+            if (problems.length > 0) {
+                console.log(`퀴즈 시작: 총 ${problems.length}개의 문제가 로드됨`);
+                document.getElementById('student-info').style.display = 'none';
+                document.getElementById('quiz-section').style.display = 'block';
+                currentProblemIndex = -1;
+                navigateProblem(1);
+                startTime = new Date();
+            } else {
+                console.error('문제가 로드되지 않음');
+                alert('문제가 로드되지 않았습니다.');
+            }
+        } else {
+            alert('학번과 이름을 모두 입력해주세요.');
+        }
+    }
+
+    function navigateProblem(direction) {
+        currentProblemIndex += direction;
+        if (currentProblemIndex < 0) currentProblemIndex = 0;
+        if (currentProblemIndex >= problems.length) currentProblemIndex = problems.length - 1;
         
-        document.getElementById('prev-problem').style.visibility = currentProblemIndex === 0 ? 'hidden' : 'visible';
-        document.getElementById('next-problem').style.visibility = currentProblemIndex === problems.length - 1 ? 'hidden' : 'visible';
-    } else {
-        document.getElementById('problem-title').textContent = '더 이상 문제가 없습니다.';
-    }
-}
-
-function checkAnswer() {
-    const currentProblem = problems[currentProblemIndex];
-    const userX = parseFloat(document.getElementById('x-value').value);
-    const userY = parseFloat(document.getElementById('y-value').value);
-    
-    if (isNaN(userX) || isNaN(userY)) {
-        document.getElementById('feedback').textContent = '유효한 숫자를 입력해주세요.';
-        document.getElementById('feedback').className = 'incorrect';
-        return;
+        showProblem();
     }
 
-    const isCorrect = (userX === currentProblem.x && userY === currentProblem.y);
-    
-    const feedback = document.getElementById('feedback');
-    feedback.textContent = isCorrect ? '정답입니다!' : '틀렸습니다. 다시 시도해보세요.';
-    feedback.className = isCorrect ? 'correct' : 'incorrect';
-
-    if (isCorrect) {
-        score += 10;
-        answeredQuestions++;
+    function showProblem() {
+        if (problems.length > 0 && currentProblemIndex >= 0 && currentProblemIndex < problems.length) {
+            const currentProblem = problems[currentProblemIndex];
+            document.getElementById('problem-title').textContent = `문제 ${currentProblemIndex + 1}: ${currentProblem.question}`;
+            document.getElementById('x-value').value = '';
+            document.getElementById('y-value').value = '';
+            document.getElementById('feedback').textContent = '';
+            document.getElementById('feedback').className = '';
+            
+            document.getElementById('prev-problem').style.visibility = currentProblemIndex === 0 ? 'hidden' : 'visible';
+            document.getElementById('next-problem').style.visibility = currentProblemIndex === problems.length - 1 ? 'hidden' : 'visible';
+        } else {
+            document.getElementById('problem-title').textContent = '더 이상 문제가 없습니다.';
+        }
     }
-}
 
-function endQuiz() {
-    if (confirm('정말로 퀴즈를 종료하시겠습니까?')) {
-        endTime = new Date();
-        const studyTime = Math.round((endTime - startTime) / 1000); // 초 단위
-        const hours = Math.floor(studyTime / 3600);
-        const minutes = Math.floor((studyTime % 3600) / 60);
-        const seconds = studyTime % 60;
+    function checkAnswer() {
+        const currentProblem = problems[currentProblemIndex];
+        const userX = parseFloat(document.getElementById('x-value').value);
+        const userY = parseFloat(document.getElementById('y-value').value);
+        
+        if (isNaN(userX) || isNaN(userY)) {
+            document.getElementById('feedback').textContent = '유효한 숫자를 입력해주세요.';
+            document.getElementById('feedback').className = 'incorrect';
+            return;
+        }
 
-        const resultMessage = `
+        const isCorrect = (userX === currentProblem.x && userY === currentProblem.y);
+        
+        const feedback = document.getElementById('feedback');
+        feedback.textContent = isCorrect ? '정답입니다!' : '틀렸습니다. 다시 시도해보세요.';
+        feedback.className = isCorrect ? 'correct' : 'incorrect';
+
+        if (isCorrect) {
+            score += 10;
+            answeredQuestions++;
+        }
+    }
+
+    function endQuiz() {
+        if (confirm('정말로 퀴즈를 종료하시겠습니까?')) {
+            endTime = new Date();
+            const studyTime = Math.round((endTime - startTime) / 1000); // 초 단위
+            const hours = Math.floor(studyTime / 3600);
+            const minutes = Math.floor((studyTime % 3600) / 60);
+            const seconds = studyTime % 60;
+
+            const resultMessage = `
 퀴즈가 종료되었습니다.
 
 학습 결과:
@@ -246,42 +253,42 @@ function endQuiz() {
 
 수고하셨습니다!`;
 
-        alert(resultMessage);
+            alert(resultMessage);
 
-        // 최종 결과를 구글 시트에 전송
-        sendFinalResultToSheet(studyTime);
+            // 최종 결과를 구글 시트에 전송
+            sendFinalResultToSheet(studyTime);
 
-        document.getElementById('quiz-section').style.display = 'none';
-        document.getElementById('student-info').style.display = 'block';
-    }
-}
-
-function sendFinalResultToSheet(studyTime) {
-    const data = {
-      학번: studentId,
-      이름: studentName,
-      학습시간: studyTime,
-      점수: score
-    };
-
-    fetch('https://script.google.com/macros/s/AKfycbzlu0TcZa9hXTSufFMmzArBhCKV5IazccZnJHatF976D9QupOnxk-o-r6qqoMFKaptf/exec', {
-        method: 'POST',
-        mode: 'no-cors',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: new URLSearchParams(data).toString()
-    })
-    .then(response => {
-        console.log('Response received:', response);
-        if (response.type === 'opaque') {
-            console.log('최종 결과가 성공적으로 전송되었습니다.');
-        } else {
-            throw new Error('Unexpected response type');
+            document.getElementById('quiz-section').style.display = 'none';
+            document.getElementById('student-info').style.display = 'block';
         }
-    })
-    .catch((error) => console.error('최종 결과 전송 중 오류 발생:', error));
-}
-  </script>
+    }
+
+    function sendFinalResultToSheet(studyTime) {
+        const data = {
+          학번: studentId,
+          이름: studentName,
+          학습시간: studyTime,
+          점수: score
+        };
+
+        fetch('https://script.google.com/macros/s/AKfycbzlu0TcZa9hXTSufFMmzArBhCKV5IazccZnJHatF976D9QupOnxk-o-r6qqoMFKaptf/exec', {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: new URLSearchParams(data).toString()
+        })
+        .then(response => {
+            console.log('Response received:', response);
+            if (response.type === 'opaque') {
+                console.log('최종 결과가 성공적으로 전송되었습니다.');
+            } else {
+                throw new Error('Unexpected response type');
+            }
+        })
+        .catch((error) => console.error('최종 결과 전송 중 오류 발생:', error));
+    }
+    </script>
 </body>
 </html>
