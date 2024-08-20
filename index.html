@@ -288,18 +288,18 @@
 
     fetch('https://script.google.com/macros/s/AKfycbz55hL8GLPMDZHahBeOgnsq1pRXUb70BrEn4beTJJel-1KWLrATMbmnaKlE85DCwS3j/exec', {
         method: 'POST',
-        mode: 'no-cors',
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
         },
         body: new URLSearchParams(data).toString()
     })
-    .then(response => {
-        console.log('Response received:', response);
-        if (response.type === 'opaque') {
+    .then(response => response.json())  // no-cors 제거 후 응답을 JSON으로 처리
+    .then(data => {
+        console.log('Response data:', data);
+        if (data.result === 'success') {
             console.log('최종 결과가 성공적으로 전송되었습니다.');
         } else {
-            throw new Error('Unexpected response type');
+            throw new Error('전송 실패');
         }
     })
     .catch((error) => {
