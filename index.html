@@ -279,31 +279,31 @@
     }
 
     function sendFinalResultToSheet(studyTime) {
-        const data = {
-          학번: studentId,
-          이름: studentName,
-          학습시간: studyTime,
-          점수: score
-        };
+    const data = {
+      학번: studentId,
+      이름: studentName,
+      학습시간: studyTime,
+      점수: score
+    };
 
-        fetch('https://script.google.com/macros/s/AKfycbzlu0TcZa9hXTSufFMmzArBhCKV5IazccZnJHatF976D9QupOnxk-o-r6qqoMFKaptf/exec', {
-            method: 'POST',
-            mode: 'no-cors',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            body: new URLSearchParams(data).toString()
-        })
-        .then(response => {
-            console.log('Response received:', response);
-            if (response.type === 'opaque') {
-                console.log('최종 결과가 성공적으로 전송되었습니다.');
-            } else {
-                throw new Error('Unexpected response type');
-            }
-        })
-        .catch((error) => console.error('최종 결과 전송 중 오류 발생:', error));
-    }
+    fetch('https://script.google.com/macros/s/AKfycbz55hL8GLPMDZHahBeOgnsq1pRXUb70BrEn4beTJJel-1KWLrATMbmnaKlE85DCwS3j/exec', {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams(data).toString()
+    })
+    .then(response => {
+        console.log('Response received:', response);
+        if (response.type === 'opaque') {
+            console.log('최종 결과가 성공적으로 전송되었습니다.');
+        } else {
+            throw new Error('Unexpected response type');
+        }
+    })
+    .catch((error) => console.error('최종 결과 전송 중 오류 발생:', error));
+}
     </script>
 </body>
 </html>
