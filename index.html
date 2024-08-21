@@ -261,26 +261,28 @@
         async function sendDataToGoogleSheet(data) {
     console.log('데이터 전송 시작');
     isDataBeingSent = true;
-    const url = 'https://script.google.com/macros/s/AKfycbzAQUKLdF3-g0ry957FX1Hn53SVnxu7do-B63fVjeMBBdwE9ufjLDP0oKMAFTm4wmXMnw/exec';
+    const url = 'https://script.google.com/macros/s/AKfycbzsJ3KWEvKvs5x-As0llg5sHnTr4IgEQN5yFK9W5yznwVc0gS3DTHwJRojhfpq4rA9Q7w/exec';
     
-    const payload = {
+    const payload = new URLSearchParams({
         '학번': data.studentId,
         '이름': data.studentName,
         '학습시간': data.timeTaken.toFixed(2),
         '점수': `${data.score}/${data.answeredQuestions}`
-    };
+    });
 
     try {
         console.log('fetch 요청 시작');
         const response = await fetch(url, {
             method: 'POST',
-            body: JSON.stringify(payload),
+            body: payload,
             headers: {
-                'Content-Type': 'application/json',
+                'Content-Type': 'application/x-www-form-urlencoded',
             },
-            mode: 'no-cors'
         });
         console.log('fetch 요청 완료');
+
+        const responseText = await response.text();
+        console.log('응답:', responseText);
 
         console.log('데이터 전송 완료');
         alert('퀴즈가 종료되었습니다. 데이터를 전송했습니다.');
