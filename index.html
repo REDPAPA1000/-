@@ -261,7 +261,7 @@
        async function sendDataToGoogleSheet(data) {
     console.log('데이터 전송 시작');
     isDataBeingSent = true;
-    const SCRIPT_URL = 'YOUR_WEB_APP_URL'; // Google Apps Script 웹 앱 URL로 교체하세요
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzXQgq1V3dz8Xxi1Bum4Mlwsdt2JIrKkzHjrX9j9gI4fvUVNrsQ92ZxUUEYwFTiRkxKhg/exec'; // Google Apps Script 웹 앱 URL로 교체하세요
     
     const params = new URLSearchParams({
         '학번': data.studentId,
