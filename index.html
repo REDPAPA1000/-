@@ -266,13 +266,12 @@
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                studentId: data.studentId,
-                studentName: data.studentName,
-                timeTaken: data.timeTaken.toFixed(2),
-                score: data.score,
-                answeredQuestions: data.answeredQuestions
+               '학번': data.studentId,
+                        '이름': data.studentName,
+                        '학습시간': data.timeTaken.toFixed(2),
+                        '점수': data.score + '/' + data.answeredQuestions
             }),
-            mode: 'cors' // Explicitly set CORS mode
+           mode: 'no-cors' // 변경: no-cors 모드 사용
         });
 
         const result = await response.json();
