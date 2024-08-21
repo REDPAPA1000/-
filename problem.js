@@ -372,8 +372,6 @@ const problemsData = [
   {
     "question": "0.17x + y = 9, 0.83x + 0.25y = 22일 때, x와 y의 값을 구하세요.",
     "x": 12
-
-,
     "y": 3
   },
   {
