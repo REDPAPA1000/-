@@ -293,21 +293,27 @@
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify(data),
-        credentials: 'include'
+        body: JSON.stringify(data)
     })
     .then(response => {
         console.log('Response status:', response.status);
-        console.log('Response headers:', response.headers);
         if (!response.ok) {
-            return response.text().then(text => {
-                throw new Error(`HTTP error! status: ${response.status}, message: ${text}`);
-            });
+            throw new Error(`HTTP error! status: ${response.status}`);
         }
         return response.text();
     })
     .then(data => {
         console.log('Response data:', data);
+        let jsonData;
+        try {
+            jsonData = JSON.parse(data);
+        } catch (error) {
+            console.error('Error parsing JSON:', error);
+            throw new Error('Invalid response format');
+        }
+        if (jsonData.error) {
+            throw new Error(jsonData.error);
+        }
         alert('결과가 성공적으로 전송되었습니다.');
     })
     .catch((error) => {
