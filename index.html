@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>연립방정식 계산엽습 애플리케이션</title>
+    <title>연립방정식 계산 연습 애플리케이션</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
     <style>
         body {
@@ -84,11 +84,6 @@
             align-items: center;
             margin-top: 1rem;
         }
-        .navigation img {
-            width: 30px;
-            height: 30px;
-            cursor: pointer;
-        }
         #end-quiz {
             background-color: #e74c3c;
         }
@@ -147,168 +142,147 @@
 
     <script src="problem.js"></script>
     <script>
-    let problems = [];
-    let currentProblemIndex = -1;
-    let studentName = '';
-    let studentId = '';
-    let startTime;
-    let endTime;
-    let score = 0;
-    let answeredQuestions = 0;
+        let problems = [];
+        let currentProblemIndex = -1;
+        let studentName = '';
+        let studentId = '';
+        let startTime;
+        let endTime;
+        let score = 0;
+        let answeredQuestions = 0;
 
-    document.addEventListener('DOMContentLoaded', function() {
-        loadProblems();
-        document.getElementById('start-quiz').addEventListener('click', startQuiz);
-        document.getElementById('submit-answer').addEventListener('click', checkAnswer);
-        document.getElementById('prev-problem').addEventListener('click', () => navigateProblem(-1));
-        document.getElementById('next-problem').addEventListener('click', () => navigateProblem(1));
-        document.getElementById('end-quiz').addEventListener('click', endQuiz);
-    });
+        document.addEventListener('DOMContentLoaded', function() {
+            loadProblems();
+            document.getElementById('start-quiz').addEventListener('click', startQuiz);
+            document.getElementById('submit-answer').addEventListener('click', checkAnswer);
+            document.getElementById('prev-problem').addEventListener('click', () => navigateProblem(-1));
+            document.getElementById('next-problem').addEventListener('click', () => navigateProblem(1));
+            document.getElementById('end-quiz').addEventListener('click', endQuiz);
+        });
 
-    function shuffleArray(array) {
-        for (let i = array.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [array[i], array[j]] = [array[j], array[i]];
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
         }
-    }
 
-    function loadProblems() {
-        console.log('problemsData:', problemsData);
-        problems = problemsData;
-        shuffleArray(problems);
-        console.log('Shuffled problems:', problems);
-    }
-
-    function startQuiz() {
-        studentId = document.getElementById('student-id').value.trim();
-        studentName = document.getElementById('student-name').value.trim();
-
-        if (studentId && studentName) {
+        function loadProblems() {
+            problems = problemsData || [];
             if (problems.length > 0) {
-                console.log(`퀴즈 시작: 총 ${problems.length}개의 문제가 로드됨`);
-                document.getElementById('student-info').style.display = 'none';
-                document.getElementById('quiz-section').style.display = 'block';
-                currentProblemIndex = -1;
-                navigateProblem(1);
-                startTime = new Date();
+                shuffleArray(problems);
             } else {
                 console.error('문제가 로드되지 않음');
                 alert('문제가 로드되지 않았습니다.');
             }
-        } else {
-            alert('학번과 이름을 모두 입력해주세요.');
         }
-    }
 
-    function navigateProblem(direction) {
-        currentProblemIndex += direction;
-        if (currentProblemIndex < 0) currentProblemIndex = 0;
-        if (currentProblemIndex >= problems.length) currentProblemIndex = problems.length - 1;
-        
-        showProblem();
-    }
+        function startQuiz() {
+            studentId = document.getElementById('student-id').value.trim();
+            studentName = document.getElementById('student-name').value.trim();
 
-    function showProblem() {
-        if (problems.length > 0 && currentProblemIndex >= 0 && currentProblemIndex < problems.length) {
-            const currentProblem = problems[currentProblemIndex];
-            const problemTitle = document.getElementById('problem-title');
-            problemTitle.innerHTML = `
-                <h2>문제 ${currentProblemIndex + 1}</h2>
-                <p>${currentProblem.question}</p>
-            `;
-            document.getElementById('x-value').value = '';
-            document.getElementById('y-value').value = '';
-            document.getElementById('feedback').textContent = '';
-            document.getElementById('feedback').className = '';
+            if (studentId && studentName) {
+                if (problems.length > 0) {
+                    document.getElementById('student-info').style.display = 'none';
+                    document.getElementById('quiz-section').style.display = 'block';
+                    currentProblemIndex = 0;
+                    navigateProblem(0);
+                    startTime = new Date();
+                } else {
+                    alert('문제가 로드되지 않았습니다.');
+                }
+            } else {
+                alert('학번과 이름을 모두 입력해주세요.');
+            }
+        }
+
+        function navigateProblem(direction) {
+            currentProblemIndex += direction;
+            if (currentProblemIndex < 0) currentProblemIndex = 0;
+            if (currentProblemIndex >= problems.length) currentProblemIndex = problems.length - 1;
             
-            document.getElementById('prev-problem').disabled = currentProblemIndex === 0;
-            document.getElementById('next-problem').disabled = currentProblemIndex === problems.length - 1;
-        } else {
-            document.getElementById('problem-title').textContent = '더 이상 문제가 없습니다.';
-        }
-    }
-
-    function checkAnswer() {
-        const currentProblem = problems[currentProblemIndex];
-        const userX = parseFloat(document.getElementById('x-value').value);
-        const userY = parseFloat(document.getElementById('y-value').value);
-        
-        if (isNaN(userX) || isNaN(userY)) {
-            document.getElementById('feedback').textContent = '유효한 숫자를 입력해주세요.';
-            document.getElementById('feedback').className = 'incorrect';
-            return;
+            showProblem();
         }
 
-        const isCorrect = (userX === currentProblem.x && userY === currentProblem.y);
-        
-        const feedback = document.getElementById('feedback');
-        feedback.textContent = isCorrect ? '정답입니다!' : '틀렸습니다. 다시 시도해보세요.';
-        feedback.className = isCorrect ? 'correct' : 'incorrect';
-
-        if (isCorrect) {
-            score += 10;
-            answeredQuestions++;
+        function showProblem() {
+            if (problems.length > 0 && currentProblemIndex >= 0 && currentProblemIndex < problems.length) {
+                const currentProblem = problems[currentProblemIndex];
+                document.getElementById('problem-title').innerHTML = `
+                    <h2>문제 ${currentProblemIndex + 1}</h2>
+                    <p>${currentProblem.question}</p>
+                `;
+                document.getElementById('x-value').value = '';
+                document.getElementById('y-value').value = '';
+                document.getElementById('feedback').textContent = '';
+                document.getElementById('feedback').className = '';
+                
+                document.getElementById('prev-problem').disabled = currentProblemIndex === 0;
+                document.getElementById('next-problem').disabled = currentProblemIndex === problems.length - 1;
+            } else {
+                document.getElementById('problem-title').textContent = '더 이상 문제가 없습니다.';
+            }
         }
-    }
 
-    function endQuiz() {
-        if (confirm('정말로 퀴즈를 종료하시겠습니까?')) {
+        function checkAnswer() {
+            const currentProblem = problems[currentProblemIndex];
+            const userX = parseFloat(document.getElementById('x-value').value);
+            const userY = parseFloat(document.getElementById('y-value').value);
+            let feedback = document.getElementById('feedback');
+
+            if (!isNaN(userX) && !isNaN(userY)) {
+                if (Math.abs(currentProblem.x - userX) < 0.01 && Math.abs(currentProblem.y - userY) < 0.01) {
+                    feedback.textContent = '정답입니다!';
+                    feedback.className = 'correct';
+                    score += 1;
+                } else {
+                    feedback.textContent = '틀렸습니다. 다시 시도하세요.';
+                    feedback.className = 'incorrect';
+                }
+                answeredQuestions += 1;
+            } else {
+                alert('x 값과 y 값을 모두 입력해주세요.');
+            }
+        }
+
+        function endQuiz() {
             endTime = new Date();
-            const studyTime = Math.round((endTime - startTime) / 1000); // 초 단위
-            const hours = Math.floor(studyTime / 3600);
-            const minutes = Math.floor((studyTime % 3600) / 60);
-            const seconds = studyTime % 60;
+            const timeTaken = (endTime - startTime) / 1000;
+            const data = {
+                studentId,
+                studentName,
+                timeTaken,
+                score,
+                answeredQuestions
+            };
 
-            const resultMessage = `
-퀴즈가 종료되었습니다.
-
-학습 결과:
-- 푼 문제 수: ${answeredQuestions}개
-- 점수: ${score}점
-- 학습 시간: ${hours}시간 ${minutes}분 ${seconds}초 (${studyTime}초)
-
-수고하셨습니다!`;
-
-            alert(resultMessage);
-
-            sendFinalResultToSheet(studyTime);
-
-            document.getElementById('quiz-section').style.display = 'none';
-            document.getElementById('student-info').style.display = 'block';
+            sendDataToGoogleSheet(data);
         }
-    }
 
-    function sendFinalResultToSheet(studyTime) {
-    const data = {
-        학번: studentId,
-        이름: studentName,
-        학습시간: studyTime,
-        점수: score
-    };
+        async function sendDataToGoogleSheet(data) {
+            try {
+                const response = await fetch('https://docs.google.com/forms/u/0/d/e/YOUR_FORM_ID/formResponse', {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: new URLSearchParams({
+                        'entry.XXXXXXX': data.studentId,
+                        'entry.YYYYYYY': data.studentName,
+                        'entry.ZZZZZZZ': data.timeTaken.toFixed(2),
+                        'entry.AAAAAAA': data.score,
+                        'entry.BBBBBBB': data.answeredQuestions
+                    })
+                });
 
-    console.log('Sending data:', data);
-
-    fetch('https://script.google.com/macros/s/AKfycbyhUpheG8h5V7F47NjS3c2wKC9fGB_rbqWJJ20ixh0ziazIVDm6QR9H4i8lrAatm0CFxg/exec', {
-    method: 'POST',
-    mode: 'no-cors',
-    headers: {
-        'Content-Type': 'application/json',  // Updated to application/json
-    },
-    body: JSON.stringify(data)
-})
-.then(response => {
-    console.log('Response received:', response);
-    if (response.type === 'opaque') {
-        console.log('Opaque response received. This is expected with no-cors mode.');
-        alert('결과가 전송되었습니다. (응답 확인 불가)');
-    }
-})
-.catch((error) => {
-    console.error('최종 결과 전송 중 오류 발생:', error);
-    alert('결과 전송 중 오류가 발생했습니다. 관리자에게 문의해주세요. 오류: ' + error.message);
-});
-
-}
+                alert('퀴즈가 종료되었습니다. 데이터를 전송했습니다.');
+                location.reload();
+            } catch (error) {
+                console.error('데이터 전송 중 오류 발생:', error);
+                alert('데이터 전송에 실패했습니다.');
+            }
+        }
     </script>
 </body>
 </html>
+
