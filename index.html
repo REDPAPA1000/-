@@ -266,22 +266,26 @@
     headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
     },
-                    body: new URLSearchParams({
-                        'entry.XXXXXXX': data.studentId,
-                        'entry.YYYYYYY': data.studentName,
-                        'entry.ZZZZZZZ': data.timeTaken.toFixed(2),
-                        'entry.AAAAAAA': data.score,
-                        'entry.BBBBBBB': data.answeredQuestions
+                   body: JSON.stringify({
+        학번: studentId,
+        이름: studentName,
+        학습시간: studyTime,
+        점수: score
                     })
-                });
-
-                alert('퀴즈가 종료되었습니다. 데이터를 전송했습니다.');
-                location.reload();
-            } catch (error) {
-                console.error('데이터 전송 중 오류 발생:', error);
-                alert('데이터 전송에 실패했습니다.');
-            }
-        }
+               })
+.then(response => response.json()) // JSON 응답을 파싱
+.then(data => {
+    console.log('Response data:', data);
+    if (data.result === 'Success') {
+        alert('결과가 성공적으로 전송되었습니다.');
+    } else {
+        alert('전송 중 문제가 발생했습니다: ' + data.error);
+    }
+})
+.catch(error => {
+    console.error('Error:', error);
+    alert('결과 전송 중 오류가 발생했습니다. 관리자에게 문의해주세요. 오류: ' + error.message);
+});
     </script>
 </body>
 </html>
