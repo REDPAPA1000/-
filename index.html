@@ -286,6 +286,8 @@
         점수: score
     };
 
+    console.log('Sending data:', data);
+
     fetch('https://script.google.com/macros/s/AKfycbz_yXv4Og8WxKDT1X8qa72unQlpxHD2pX1qO2RolyyiBUe1GO0AwhKxJhMloXPousWc/exec', {
         method: 'POST',
         headers: {
@@ -293,14 +295,18 @@
         },
         body: new URLSearchParams(data).toString()
     })
-    .then(response => response.text())
+    .then(response => {
+        console.log('Response status:', response.status);
+        console.log('Response headers:', response.headers);
+        return response.text();
+    })
     .then(data => {
         console.log('Response data:', data);
-        alert('결과가 성공적으로 전송되었습니다.');
+        alert('결과가 전송되었습니다. 응답: ' + data);
     })
     .catch((error) => {
         console.error('최종 결과 전송 중 오류 발생:', error);
-        alert('결과 전송 중 오류가 발생했습니다. 관리자에게 문의해주세요.');
+        alert('결과 전송 중 오류가 발생했습니다. 관리자에게 문의해주세요. 오류: ' + error.message);
     });
 }
     </script>
