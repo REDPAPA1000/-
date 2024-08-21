@@ -288,16 +288,17 @@
 
     console.log('Sending data:', data);
 
-    fetch('https://script.google.com/macros/s/AKfycbxwlIUQsiE0pPBv-9tlHqvH2k1-mv5fV3CLm1ewjUtNF2PQO90CBJACPgvFZOW8ZcNR/exec', {
+    const formData = new URLSearchParams(data);
+
+    fetch('https://script.google.com/macros/s/AKfycbz_yXv4Og8WxKDT1X8qa72unQlpxHD2pX1qO2RolyyiBUe1GO0AwhKxJhMloXPousWc/exec', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
         },
-        body: new URLSearchParams(data).toString()
+        body: formData
     })
     .then(response => {
         console.log('Response status:', response.status);
-        console.log('Response headers:', response.headers);
         return response.text();
     })
     .then(data => {
