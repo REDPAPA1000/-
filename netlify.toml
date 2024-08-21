@@ -1,0 +1,8 @@
+[[
+    headers
+    ]]
+  for = "/*"
+  [
+    headers.values
+    ]
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' https://script.google.com; connect-src 'self' https://script.google.com"
