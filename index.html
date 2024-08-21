@@ -286,12 +286,12 @@
         점수: score
     };
 
-    fetch('https://script.google.com/macros/s/AKfycbzOdz3ycFt4zcTjaKof3vZvkXLK0JiI3KlzopnxgDiD0tcDQuwNRMOOPn0uGbKl7dzU/exec', {
+    fetch('https://script.google.com/macros/s/AKfycbz_yXv4Og8WxKDT1X8qa72unQlpxHD2pX1qO2RolyyiBUe1GO0AwhKxJhMloXPousWc/exec', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json',
+            'Content-Type': 'application/x-www-form-urlencoded',
         },
-        body: JSON.stringify(data)
+        body: new URLSearchParams(data).toString()
     })
     .then(response => response.text())
     .then(data => {
