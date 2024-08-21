@@ -261,7 +261,7 @@
         async function sendDataToGoogleSheet(data) {
     console.log('데이터 전송 시작');
     isDataBeingSent = true;
-    const url = 'https://script.google.com/macros/s/AKfycby_NBKAbYfnGanTcKnY4MB2XSjrAHW9sdUro2RMmbrrxAZy35id3AkuoFNShXE189_I/exec';
+    const url = 'https://script.google.com/macros/s/AKfycbzsJ3KWEvKvs5x-As0llg5sHnTr4IgEQN5yFK9W5yznwVc0gS3DTHwJRojhfpq4rA9Q7w/exec';
     
     const payload = new URLSearchParams({
         '학번': data.studentId,
@@ -275,15 +275,15 @@
         const response = await fetch(url, {
             method: 'POST',
             body: payload,
+            mode: 'no-cors', // 이 줄을 추가합니다
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
             },
         });
         console.log('fetch 요청 완료');
 
-        const responseText = await response.text();
-        console.log('응답:', responseText);
-
+        // no-cors 모드에서는 응답을 읽을 수 없으므로, 
+        // 요청이 성공적으로 완료되면 성공으로 간주합니다.
         console.log('데이터 전송 완료');
         alert('퀴즈가 종료되었습니다. 데이터를 전송했습니다.');
         
