@@ -288,22 +288,24 @@
 
     console.log('Sending data:', data);
 
-    const formData = new URLSearchParams(data);
-
-    fetch('https://script.google.com/macros/s/AKfycbxHgQhhIvrw6Qbl0xKm3ICJCN_eihlwgivWQ9EyQD1tFWGhZdKKc4kJMNKdpewyBWC-/exec', {
+    fetch('https://script.google.com/macros/s/AKfycbz_yXv4Og8WxKDT1X8qa72unQlpxHD2pX1qO2RolyyiBUe1GO0AwhKxJhMloXPousWc/exec', {
         method: 'POST',
+        mode: 'no-cors',
         headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
+            'Content-Type': 'application/json',
         },
-        body: formData
+        body: JSON.stringify(data)
     })
     .then(response => {
-        console.log('Response status:', response.status);
+        console.log('Response received:', response);
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
         return response.text();
     })
     .then(data => {
         console.log('Response data:', data);
-        alert('결과가 전송되었습니다. 응답: ' + data);
+        alert('결과가 전송되었습니다.');
     })
     .catch((error) => {
         console.error('최종 결과 전송 중 오류 발생:', error);
