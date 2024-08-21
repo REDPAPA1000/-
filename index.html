@@ -288,12 +288,12 @@
 
     fetch('https://script.google.com/macros/s/AKfycbz_yXv4Og8WxKDT1X8qa72unQlpxHD2pX1qO2RolyyiBUe1GO0AwhKxJhMloXPousWc/exec', {
         method: 'POST',
-        headers: {  // 수정된 부분
-            'Content-Type': 'application/x-www-form-urlencoded',
+        headers: {
+            'Content-Type': 'application/json',
         },
-        body: new URLSearchParams(data).toString()  // 데이터를 URL 인코딩 형식으로 전송
+        body: JSON.stringify(data)
     })
-    .then(response => response.text())  // 응답을 텍스트로 받아서 확인
+    .then(response => response.text())
     .then(data => {
         console.log('Response data:', data);
         alert('결과가 성공적으로 전송되었습니다.');
