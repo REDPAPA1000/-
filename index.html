@@ -258,29 +258,23 @@
             sendDataToGoogleSheet(data);
         }
 
-        async function sendDataToGoogleSheet(data) {
+       async function sendDataToGoogleSheet(data) {
+    const url = 'https://script.google.com/macros/s/AKfycbzfzdFqsXm5QFImHaVBG4YYiu1jAlBI3uKBzSNlyuIN1jAZKehukmLQH_cRM3wfl8EC/exec';
+    const formData = new FormData();
+    formData.append('학번', data.studentId);
+    formData.append('이름', data.studentName);
+    formData.append('학습시간', data.timeTaken.toFixed(2));
+    formData.append('점수', `${data.score}/${data.answeredQuestions}`);
+
     try {
-        const response = await fetch('https://script.google.com/macros/s/AKfycbzfzdFqsXm5QFImHaVBG4YYiu1jAlBI3uKBzSNlyuIN1jAZKehukmLQH_cRM3wfl8EC/exec', {
+        const response = await fetch(url, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-               '학번': data.studentId,
-                        '이름': data.studentName,
-                        '학습시간': data.timeTaken.toFixed(2),
-                        '점수': data.score + '/' + data.answeredQuestions
-            }),
-           mode: 'no-cors' // 변경: no-cors 모드 사용
+            body: formData,
+            mode: 'no-cors'
         });
 
-        const result = await response.json();
-        
-        if (response.ok) {
-            alert('퀴즈가 종료되었습니다. 데이터를 전송했습니다.');
-        } else {
-            alert('데이터 전송에 실패했습니다: ' + result.error);
-        }
+        console.log('데이터 전송 완료');
+        alert('퀴즈가 종료되었습니다. 데이터를 전송했습니다.');
         location.reload();
     } catch (error) {
         console.error('데이터 전송 중 오류 발생:', error);
