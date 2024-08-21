@@ -75,7 +75,7 @@
             background-color: #f2dede;
             color: #a94442;
         }
-        #quiz-section {
+        #quiz-section, #result-section {
             display: none;
         }
         .navigation {
@@ -111,11 +111,11 @@
             <div id="problem-title"></div>
             <div class="input-group">
                 <label for="x-value">x 값:</label>
-                <input type="number" id="x-value">
+                <input type="number" id="x-value" step="0.01">
             </div>
             <div class="input-group">
                 <label for="y-value">y 값:</label>
-                <input type="number" id="y-value">
+                <input type="number" id="y-value" step="0.01">
             </div>
             <button id="submit-answer">정답 제출</button>
             <div id="feedback"></div>
@@ -124,6 +124,11 @@
                 <button id="end-quiz">종료</button>
                 <button id="next-problem">다음</button>
             </div>
+        </div>
+
+        <div id="result-section">
+            <h2>학습 결과</h2>
+            <p id="result-message"></p>
         </div>
     </div>
 
@@ -143,8 +148,10 @@
                 question: "x + y = 7, 2x - y = 1 의 해를 구하시오.",
                 x: 3,
                 y: 4
-            }
+            },
+            // ... 나머지 77개의 문제를 추가하세요 ...
         ];
+
         let currentProblemIndex = -1;
         let studentName = '';
         let studentId = '';
@@ -181,16 +188,12 @@
             studentName = document.getElementById('student-name').value.trim();
 
             if (studentId && studentName) {
-                if (problems.length > 0) {
-                    document.getElementById('student-info').style.display = 'none';
-                    document.getElementById('quiz-section').style.display = 'block';
-                    shuffleArray(problems);
-                    currentProblemIndex = 0;
-                    navigateProblem(0);
-                    startTime = new Date();
-                } else {
-                    alert('문제가 로드되지 않았습니다.');
-                }
+                document.getElementById('student-info').style.display = 'none';
+                document.getElementById('quiz-section').style.display = 'block';
+                shuffleArray(problems);
+                currentProblemIndex = 0;
+                showProblem();
+                startTime = new Date();
             } else {
                 alert('학번과 이름을 모두 입력해주세요.');
             }
@@ -205,22 +208,18 @@
         }
 
         function showProblem() {
-            if (problems.length > 0 && currentProblemIndex >= 0 && currentProblemIndex < problems.length) {
-                const currentProblem = problems[currentProblemIndex];
-                document.getElementById('problem-title').innerHTML = `
-                    <h2>문제 ${currentProblemIndex + 1}</h2>
-                    <p>${currentProblem.question}</p>
-                `;
-                document.getElementById('x-value').value = '';
-                document.getElementById('y-value').value = '';
-                document.getElementById('feedback').textContent = '';
-                document.getElementById('feedback').className = '';
-                
-                document.getElementById('prev-problem').disabled = currentProblemIndex === 0;
-                document.getElementById('next-problem').disabled = currentProblemIndex === problems.length - 1;
-            } else {
-                document.getElementById('problem-title').textContent = '더 이상 문제가 없습니다.';
-            }
+            const currentProblem = problems[currentProblemIndex];
+            document.getElementById('problem-title').innerHTML = `
+                <h2>문제 ${currentProblemIndex + 1}</h2>
+                <p>${currentProblem.question}</p>
+            `;
+            document.getElementById('x-value').value = '';
+            document.getElementById('y-value').value = '';
+            document.getElementById('feedback').textContent = '';
+            document.getElementById('feedback').className = '';
+            
+            document.getElementById('prev-problem').disabled = currentProblemIndex === 0;
+            document.getElementById('next-problem').disabled = currentProblemIndex === problems.length - 1;
         }
 
         function checkAnswer() {
@@ -247,6 +246,15 @@
         async function endQuiz() {
             endTime = new Date();
             const timeTaken = (endTime - startTime) / 1000;
+            const minutes = Math.floor(timeTaken / 60);
+            const seconds = Math.floor(timeTaken % 60);
+            
+            const resultMessage = `수고하셨습니다. 당신의 학습 시간은 ${minutes}분 ${seconds}초, 점수는 ${score}/${answeredQuestions}점입니다.`;
+            
+            document.getElementById('result-message').textContent = resultMessage;
+            document.getElementById('quiz-section').style.display = 'none';
+            document.getElementById('result-section').style.display = 'block';
+
             const data = {
                 studentId,
                 studentName,
@@ -258,41 +266,35 @@
             await sendDataToGoogleSheet(data);
         }
 
-       async function sendDataToGoogleSheet(data) {
-    console.log('데이터 전송 시작');
-    isDataBeingSent = true;
-    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzXQgq1V3dz8Xxi1Bum4Mlwsdt2JIrKkzHjrX9j9gI4fvUVNrsQ92ZxUUEYwFTiRkxKhg/exec'; // Google Apps Script 웹 앱 URL로 교체하세요
-    
-    const params = new URLSearchParams({
-        '학번': data.studentId,
-        '이름': data.studentName,
-        '학습시간': data.timeTaken.toFixed(2),
-        '점수': `${data.score}/${data.answeredQuestions}`
-    });
+        async function sendDataToGoogleSheet(data) {
+            console.log('데이터 전송 시작');
+            isDataBeingSent = true;
+            const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzXQgq1V3dz8Xxi1Bum4Mlwsdt2JIrKkzHjrX9j9gI4fvUVNrsQ92ZxUUEYwFTiRkxKhg/exec';
+            
+            const params = new URLSearchParams({
+                '학번': data.studentId,
+                '이름': data.studentName,
+                '학습시간': data.timeTaken.toFixed(2),
+                '점수': `${data.score}/${data.answeredQuestions}`
+            });
 
-    try {
-        console.log('fetch 요청 시작');
-        const response = await fetch(`${SCRIPT_URL}?${params.toString()}`, {
-            method: 'GET',
-            mode: 'no-cors'
-        });
+            try {
+                console.log('fetch 요청 시작');
+                const response = await fetch(`${SCRIPT_URL}?${params.toString()}`, {
+                    method: 'GET',
+                    mode: 'no-cors'
+                });
 
-        console.log('fetch 요청 완료');
-        console.log('데이터 전송 완료');
-        alert('퀴즈가 종료되었습니다. 데이터를 전송했습니다.');
-        
-        console.log('페이지 리로드 예정');
-        setTimeout(() => {
-            console.log('페이지 리로드 시작');
-            isDataBeingSent = false;
-            location.reload();
-        }, 1000);
-    } catch (error) {
-        console.error('데이터 전송 중 오류 발생:', error);
-        alert('데이터 전송에 실패했습니다: ' + error.message);
-        isDataBeingSent = false;
-    }
-}
+                console.log('fetch 요청 완료');
+                console.log('데이터 전송 완료');
+                alert('퀴즈가 종료되었습니다. 데이터를 전송했습니다.');
+            } catch (error) {
+                console.error('데이터 전송 중 오류 발생:', error);
+                alert('데이터 전송에 실패했습니다: ' + error.message);
+            } finally {
+                isDataBeingSent = false;
+            }
+        }
     </script>
 </body>
 </html>
