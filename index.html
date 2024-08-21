@@ -288,37 +288,32 @@
 
     console.log('Sending data:', data);
 
-    fetch('https://script.google.com/macros/s/AKfycbyt2C1A3MRsnhjkwHh3NrkH4tdOG9Xrsm9N-iSXWWOrbdiVIG_hLhHuxYabaSpTCsoR2Q/exec', {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 10000); // 10초 타임아웃
+
+    fetch('https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec', {
         method: 'POST',
+        mode: 'no-cors',
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify(data)
+        body: JSON.stringify(data),
+        signal: controller.signal
     })
-    .then(response => {
-        console.log('Response status:', response.status);
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        return response.text();
-    })
-    .then(data => {
-        console.log('Response data:', data);
-        let jsonData;
-        try {
-            jsonData = JSON.parse(data);
-        } catch (error) {
-            console.error('Error parsing JSON:', error);
-            throw new Error('Invalid response format');
-        }
-        if (jsonData.error) {
-            throw new Error(jsonData.error);
-        }
-        alert('결과가 성공적으로 전송되었습니다.');
+    .then(() => {
+        clearTimeout(timeoutId);
+        console.log('Data sent successfully');
+        alert('결과가 전송되었습니다.');
     })
     .catch((error) => {
-        console.error('최종 결과 전송 중 오류 발생:', error);
-        alert('결과 전송 중 오류가 발생했습니다. 관리자에게 문의해주세요. 오류: ' + error.message);
+        clearTimeout(timeoutId);
+        if (error.name === 'AbortError') {
+            console.error('요청이 타임아웃되었습니다.');
+            alert('결과 전송 시간이 초과되었습니다. 다시 시도해 주세요.');
+        } else {
+            console.error('최종 결과 전송 중 오류 발생:', error);
+            alert('결과 전송 중 오류가 발생했습니다. 관리자에게 문의해주세요.');
+        }
     });
 }
     </script>
