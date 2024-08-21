@@ -262,30 +262,31 @@
             try {
                 const response = await fetch('https://script.google.com/macros/s/AKfycbyhUpheG8h5V7F47NjS3c2wKC9fGB_rbqWJJ20ixh0ziazIVDm6QR9H4i8lrAatm0CFxg/exec', {
     method: 'POST',
-    mode: 'cors', // CORS를 허용한 서버에서만 사용
-    headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-    },
-                   body: JSON.stringify({
-        학번: studentId,
-        이름: studentName,
-        학습시간: studyTime,
-        점수: score
-                    })
-               })
-.then(response => response.json()) // JSON 응답을 파싱
-.then(data => {
-    console.log('Response data:', data);
-    if (data.result === 'Success') {
-        alert('결과가 성공적으로 전송되었습니다.');
-    } else {
-        alert('전송 중 문제가 발생했습니다: ' + data.error);
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                studentId: data.studentId,
+                studentName: data.studentName,
+                timeTaken: data.timeTaken.toFixed(2),
+                score: data.score,
+                answeredQuestions: data.answeredQuestions
+            })
+        });
+
+        const result = await response.json();
+        
+        if (response.ok) {
+            alert('퀴즈가 종료되었습니다. 데이터를 전송했습니다.');
+        } else {
+            alert('데이터 전송에 실패했습니다: ' + result.error);
+        }
+        location.reload();
+    } catch (error) {
+        console.error('데이터 전송 중 오류 발생:', error);
+        alert('데이터 전송에 실패했습니다.');
     }
-})
-.catch(error => {
-    console.error('Error:', error);
-    alert('결과 전송 중 오류가 발생했습니다. 관리자에게 문의해주세요. 오류: ' + error.message);
-});
+}
     </script>
 </body>
 </html>
